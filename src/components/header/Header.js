@@ -6,7 +6,7 @@ import { Authentication } from "../Authentication";
 
 const Header = () => {
   return (
-    <header className="header">
+    <header className="p-3" style={{ backgroundColor: "#e0d0ff" }}>
       <Col className="d-flex align-items-center justify-content-between gap-3">
         <Link to="/">
           <img src={MainIcon} alt="Main Icon" width="50" height="50" />

@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Home, Item, Cart, User } from "./pages";
-import { Header } from "./components";
+import { Header, Footer } from "./components";
 import { NAVIGATION_ROUTES } from "./constants";
 
 function App() {
@@ -15,6 +15,7 @@ function App() {
           <Route path={NAVIGATION_ROUTES.cart} element={<Cart />} />
           <Route path={NAVIGATION_ROUTES.user} element={<User />} />
         </Routes>
+        <Footer />
       </BrowserRouter>
     </div>
   );

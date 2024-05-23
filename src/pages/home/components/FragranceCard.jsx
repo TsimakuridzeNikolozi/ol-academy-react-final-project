@@ -11,14 +11,18 @@ import {
 import ImageCarousel from "./ImageCarousel";
 import { ReactComponent as HeartIcon } from "../../../assets/images/HeartIcon.svg";
 import { useLocalStorage } from "usehooks-ts";
+import { ReactComponent as CartIcon } from "../../../assets/images/CartIcon.svg";
 
 const FragranceCard = ({
   fragranceId,
   fragranceName,
+  fragranceConcentration,
   brand,
   description,
   imageSources,
   color,
+  rating,
+  numberOfRatings,
 }) => {
   // Hearting functionality
   const [heartedFragrances, setHeartedFragrances] = useLocalStorage(
@@ -43,6 +47,7 @@ const FragranceCard = ({
     transition: "box-shadow 0.3s ease-in-out",
     width: "100%",
     borderRadius: "10px",
+    maxWidth: "400px",
   };
 
   return (
@@ -55,7 +60,9 @@ const FragranceCard = ({
       <ImageCarousel imageSources={imageSources} />
       <CardBody>
         <Col className="d-flex align-items-center justify-content-between">
-          <CardTitle tag="h5">{fragranceName}</CardTitle>
+          <CardTitle tag="h5">
+            {fragranceName} {fragranceConcentration}
+          </CardTitle>
           <button
             onClick={() => saveHeartedFragrance()}
             style={{ border: "none", backgroundColor: "transparent" }}
@@ -75,7 +82,12 @@ const FragranceCard = ({
           {brand}
         </CardSubtitle>
         <CardText className="textWithLineClamp">{description}</CardText>
-        <Button color="primary">More</Button>
+        <Col className="d-flex gap-2">
+          <Button color="primary">More</Button>
+          <Button color="success">
+            <CartIcon style={{ width: "20px", height: "20px" }} />
+          </Button>
+        </Col>
       </CardBody>
     </Card>
   );

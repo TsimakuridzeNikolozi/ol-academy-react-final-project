@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import FragranceCard from "./FragranceCard";
 import { Container, Row, Col } from "reactstrap";
 import Pagination from "./Pagination";
-import SearchAndFiltering from "./SearchAndFiltering";
+import Search from "./Search";
 import useFragranceList from "../../../hooks/useFragranceList";
 
 const FragranceList = () => {
@@ -11,22 +11,18 @@ const FragranceList = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState(null);
-  const [selectedSort, setSelectedSort] = useState(null);
   const itemsPerPage = 8;
 
-  // Filter and sort items
-  let filteredItems = fragranceList.filter((item) =>
-    item.name.includes(searchTerm)
-  );
-  if (selectedFilter) {
-    filteredItems = filteredItems.filter(
-      (item) => item.category === selectedFilter
+  // Filter items by search term
+  let filteredItems = fragranceList.filter((item) => {
+    const lowercaseSearchTerm = searchTerm.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(lowercaseSearchTerm) ||
+      item.brand.toLowerCase().includes(lowercaseSearchTerm) ||
+      item.description.toLowerCase().includes(lowercaseSearchTerm) ||
+      item.notes.toString().toLowerCase().includes(lowercaseSearchTerm)
     );
-  }
-  if (selectedSort) {
-    filteredItems.sort((a, b) => a.price - b.price);
-  }
+  });
 
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
 
@@ -40,13 +36,7 @@ const FragranceList = () => {
 
   return (
     <Container fluid style={{ padding: "36px" }}>
-      <SearchAndFiltering
-        filterOptions={["Category 1", "Category 2", "Category 3"]}
-        sortOptions={["Price low to high", "Price high to low"]}
-        onSearch={setSearchTerm}
-        onFilter={setSelectedFilter}
-        onSort={setSelectedSort}
-      />
+      <Search onSearch={setSearchTerm} />
       <Row>
         {currentItems.map((item, index) => (
           <Col
@@ -57,14 +47,17 @@ const FragranceList = () => {
             lg="4"
             xxl="3"
           >
-            <div className="my-3 w-100">
+            <div className="my-3">
               <FragranceCard
                 fragranceId={item.id}
                 fragranceName={item.name}
+                fragranceConcentration={item.concentration}
                 brand={item.brand}
                 description={item.description}
                 imageSources={item.imageSources}
                 color={item.color}
+                rating={item.rating}
+                numberOfRatings={item.numberOfRatings}
               />
             </div>
           </Col>

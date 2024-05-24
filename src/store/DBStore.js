@@ -1,6 +1,14 @@
 import { createContext, useEffect, useState } from "react";
 import { db, storage } from "../config/firebase-config";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { ref, getDownloadURL } from "firebase/storage";
 
 const DBContext = createContext();
@@ -8,9 +16,13 @@ const DBContext = createContext();
 export const DBProvider = ({ children }) => {
   const [fragranceList, setFragranceList] = useState([]);
   const [commentsList, setCommentsList] = useState([]);
+  const [likesList, setLikesList] = useState([]);
+  const [dislikesList, setDislikesList] = useState([]);
 
   const fragrancesCollectionRef = collection(db, "fragrances");
   const commentsCollectionRef = collection(db, "comments");
+  const likesCollectionRef = collection(db, "likes");
+  const dislikesCollectionRef = collection(db, "dislikes");
 
   const getFragmentList = async () => {
     try {
@@ -56,9 +68,39 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const getLikesList = async () => {
+    try {
+      const data = await getDocs(likesCollectionRef);
+      const filteredData = data.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      setLikesList(filteredData);
+    } catch (err) {
+      console.error("Error getting likes colelction from db: ", err);
+    }
+  };
+
+  const getDislikesList = async () => {
+    try {
+      const data = await getDocs(dislikesCollectionRef);
+      const filteredData = data.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      setDislikesList(filteredData);
+    } catch (err) {
+      console.error("Error getting dislikes colelction from db: ", err);
+    }
+  };
+
   useEffect(() => {
     getFragmentList();
     getCommentsList();
+    getLikesList();
+    getDislikesList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -71,14 +113,107 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const addLike = async (
+    userId,
+    commentId,
+    previousLike,
+    previousDislike,
+    previousLikeCount,
+    previousDislikeCount
+  ) => {
+    try {
+      let likeDocToUpdate = doc(likesCollectionRef, `${userId}_${commentId}`);
+
+      let commentDocToUpdate = doc(commentsCollectionRef, commentId);
+      if (previousLike) {
+        await deleteDoc(likeDocToUpdate);
+        await updateDoc(commentDocToUpdate, { likes: previousLikeCount - 1 });
+      } else {
+        await setDoc(likeDocToUpdate, {
+          userId: userId,
+          commentId: commentId,
+        });
+        await updateDoc(commentDocToUpdate, { likes: previousLikeCount + 1 });
+
+        if (previousDislike) {
+          let dislikeDocToUpdate = doc(
+            dislikesCollectionRef,
+            `${userId}_${commentId}`
+          );
+          await deleteDoc(dislikeDocToUpdate);
+          await updateDoc(commentDocToUpdate, {
+            dislikes: previousDislikeCount - 1,
+          });
+        }
+      }
+
+      getLikesList();
+      getDislikesList();
+      getCommentsList();
+    } catch (err) {
+      console.error("Error adding reaction to db: ", err);
+    }
+  };
+
+  const addDislike = async (
+    userId,
+    commentId,
+    previousLike,
+    previousDislike,
+    previousLikeCount,
+    previousDislikeCount
+  ) => {
+    try {
+      let dislikeDocToUpdate = doc(
+        dislikesCollectionRef,
+        `${userId}_${commentId}`
+      );
+
+      let commentDocToUpdate = doc(commentsCollectionRef, commentId);
+      if (previousDislike) {
+        await deleteDoc(dislikeDocToUpdate);
+        await updateDoc(commentDocToUpdate, {
+          dislike: previousDislikeCount - 1,
+        });
+      } else {
+        await setDoc(dislikeDocToUpdate, {
+          userId: userId,
+          commentId: commentId,
+        });
+        await updateDoc(commentDocToUpdate, {
+          dislikes: previousDislikeCount + 1,
+        });
+
+        if (previousLike) {
+          let likeDocToUpdate = doc(
+            likesCollectionRef,
+            `${userId}_${commentId}`
+          );
+          await deleteDoc(likeDocToUpdate);
+          await updateDoc(commentDocToUpdate, {
+            likes: previousLikeCount - 1,
+          });
+        }
+      }
+
+      getLikesList();
+      getDislikesList();
+      getCommentsList();
+    } catch (err) {
+      console.error("Error adding reaction to db: ", err);
+    }
+  };
+
   return (
     <DBContext.Provider
       value={{
         fragranceList,
         commentsList,
-        getFragmentList,
-        getCommentsList,
+        likesList,
+        dislikesList,
         addComment,
+        addLike,
+        addDislike,
       }}
     >
       {children}

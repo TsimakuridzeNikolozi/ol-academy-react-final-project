@@ -1,64 +1,55 @@
-import React from "react";
-import { Button, ListGroup, ListGroupItem } from "reactstrap";
-import { ReactComponent as LikeIcon } from "../../../assets/images/LikeIcon.svg";
+import React, { useMemo } from "react";
+import { ListGroup } from "reactstrap";
 import { useDB } from "../../../hooks/useDB";
+import Comment from "./Comment";
 
 const CommentsList = ({ fragrance }) => {
-  const { commentsList } = useDB();
+  const { commentsList, likesList, dislikesList } = useDB();
 
-  const commentsForCurrentItem = commentsList.filter(
-    (comment) => comment.fragranceId === fragrance?.id
-  );
+  const commentsForCurrentItem = useMemo(() => {
+    return commentsList.filter(
+      (comment) => comment.fragranceId === fragrance?.id
+    );
+  }, [commentsList, fragrance]);
+
+  const commentIds = useMemo(() => {
+    return new Set(commentsForCurrentItem.map((comment) => comment.id));
+  }, [commentsForCurrentItem]);
+
+  const likesByComments = useMemo(() => {
+    const reactionByCommentsMap = new Map();
+    likesList.forEach((like) => {
+      if (commentIds.has(like.commentId)) {
+        reactionByCommentsMap.set(like.commentId, [
+          ...(reactionByCommentsMap?.get(like.commentId) || []),
+          like,
+        ]);
+      }
+    });
+  }, [likesList, commentIds]);
+
+  const dislikesByComments = useMemo(() => {
+    const reactionByCommentsMap = new Map();
+    dislikesList.forEach((dislike) => {
+      if (commentIds.has(dislike.commentId)) {
+        reactionByCommentsMap.set(dislike.commentId, [
+          ...(reactionByCommentsMap?.get(dislike.commentId) || []),
+          dislike,
+        ]);
+      }
+    });
+  }, [dislikesList, commentIds]);
+
   if (!commentsList) return null;
   return (
     <ListGroup className="p-2 p-md-4 bg-light">
       {commentsForCurrentItem.map((comment, index) => (
-        <ListGroupItem
+        <Comment
           key={index}
-          className="d-flex flex-column gap-3 p-2"
-          style={{ border: "1px solid #000" }}
-        >
-          <div className="d-flex align-items-center flex-wrap gap-3">
-            <div className="d-flex align-items-center gap-1">
-              <img
-                src={comment.user.photoURL}
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "100%",
-                }}
-                alt="user"
-              />
-              <strong className="whitespace-nowraps">
-                {comment.user.displayName}
-              </strong>
-            </div>
-
-            <div className="d-flex align-items-center gap-1">
-              <Button
-                color="success"
-                outline
-                onClick={() => {}}
-                className="d-flex align-items-center gap-1"
-              >
-                <LikeIcon style={{ width: "20px", height: "20px" }} />{" "}
-                {comment.likes}
-              </Button>
-              <Button
-                color="danger"
-                outline
-                className="d-flex align-items-center gap-1"
-                onClick={() => {}}
-              >
-                <LikeIcon
-                  style={{ width: "20px", height: "20px", rotate: "180deg" }}
-                />{" "}
-                {comment.dislikes}
-              </Button>
-            </div>
-          </div>
-          <p>{comment.comment}</p>
-        </ListGroupItem>
+          comment={comment}
+          likes={likesByComments?.get(comment.id) ?? []}
+          dislikes={dislikesByComments?.get(comment.id) ?? []}
+        />
       ))}
     </ListGroup>
   );

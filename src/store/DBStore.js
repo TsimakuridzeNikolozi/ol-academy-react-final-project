@@ -244,6 +244,7 @@ export const DBProvider = ({ children }) => {
         likesList,
         dislikesList,
         userOrdersList,
+        getUserOrdersList,
         addComment,
         addLike,
         addDislike,

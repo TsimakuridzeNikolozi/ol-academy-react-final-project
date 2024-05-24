@@ -1,31 +1,11 @@
 import { Button, ButtonGroup } from "reactstrap";
-import { auth, googleProvider } from "../config/firebase-config";
-import { signInWithPopup, signOut } from "firebase/auth";
-import { useState } from "react";
 import { ReactComponent as CartIcon } from "../assets/images/CartIcon.svg";
 import { Link } from "react-router-dom";
 import { NAVIGATION_ROUTES } from "../constants";
+import { useAuthentication } from "../hooks/useAuthentication";
 
 export const Authentication = () => {
-  const [currentUser, setCurrentUser] = useState(null);
-
-  const signInWithGoogle = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider);
-      if (auth?.currentUser) setCurrentUser(auth.currentUser);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await signOut(auth);
-      setCurrentUser(null);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const { currentUser, signInWithGoogle, logout } = useAuthentication();
 
   return (
     <>

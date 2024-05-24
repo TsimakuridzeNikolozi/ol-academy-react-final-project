@@ -3,11 +3,10 @@ import FragranceCard from "./FragranceCard";
 import { Container, Row, Col } from "reactstrap";
 import Pagination from "./Pagination";
 import Search from "./Search";
-import useFragranceList from "../../../hooks/useFragranceList";
+import { useDB } from "../../../hooks/useDB";
 
 const FragranceList = () => {
-  const { fragranceList } = useFragranceList();
-  console.log(fragranceList);
+  const { fragranceList } = useDB();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");

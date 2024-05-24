@@ -6,8 +6,10 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  query,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { ref, getDownloadURL } from "firebase/storage";
 
@@ -18,11 +20,13 @@ export const DBProvider = ({ children }) => {
   const [commentsList, setCommentsList] = useState([]);
   const [likesList, setLikesList] = useState([]);
   const [dislikesList, setDislikesList] = useState([]);
+  const [userOrdersList, setUserOrdersList] = useState([]);
 
   const fragrancesCollectionRef = collection(db, "fragrances");
   const commentsCollectionRef = collection(db, "comments");
   const likesCollectionRef = collection(db, "likes");
   const dislikesCollectionRef = collection(db, "dislikes");
+  const ordersCollectionRef = collection(db, "orders");
 
   const getFragmentList = async () => {
     try {
@@ -93,6 +97,25 @@ export const DBProvider = ({ children }) => {
       setDislikesList(filteredData);
     } catch (err) {
       console.error("Error getting dislikes colelction from db: ", err);
+    }
+  };
+
+  const getUserOrdersList = async (userId) => {
+    try {
+      const userOrdersQuery = query(
+        ordersCollectionRef,
+        where("userId", "==", userId)
+      );
+      const querySnapshot = await getDocs(userOrdersQuery);
+
+      const filteredData = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      setUserOrdersList(filteredData);
+    } catch (err) {
+      console.error("Error getting user orders collection from db: ", err);
     }
   };
 
@@ -204,6 +227,15 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const addOrder = async (order) => {
+    try {
+      await addDoc(ordersCollectionRef, order);
+      getUserOrdersList(order.userId);
+    } catch (err) {
+      console.error("Error adding order to db: ", err);
+    }
+  };
+
   return (
     <DBContext.Provider
       value={{
@@ -211,9 +243,11 @@ export const DBProvider = ({ children }) => {
         commentsList,
         likesList,
         dislikesList,
+        userOrdersList,
         addComment,
         addLike,
         addDislike,
+        addOrder,
       }}
     >
       {children}

@@ -4,6 +4,7 @@ import { useLocalStorage } from "usehooks-ts";
 import CartItemCard from "./components/CartItemCard";
 import { useDB } from "../../hooks/useDB";
 import ItemContextMenu from "./components/ItemContextMenu";
+import CheckoutForm from "./components/CheckoutForm";
 
 const Cart = () => {
   const [cartItems] = useLocalStorage("cartItems", []);
@@ -55,7 +56,7 @@ const Cart = () => {
   }, [contextMenu]);
 
   return (
-    <Container style={{ height: "100vh" }}>
+    <Container style={{ minHeight: "100vh" }}>
       <h1>Cart</h1>
       <ListGroup className="p-3 p-sm-6 bg-light">
         {cartItems.map((item) => {
@@ -89,6 +90,8 @@ const Cart = () => {
           <ItemContextMenu item={contextMenu?.item} />
         </div>
       )}
+
+      <CheckoutForm />
     </Container>
   );
 };

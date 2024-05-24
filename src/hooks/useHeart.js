@@ -7,11 +7,9 @@ export const useHeart = ({ fragranceId }) => {
     []
   );
 
-  console.log(heartedFragrances);
   const fragranceHearted = useMemo(() => {
     return heartedFragrances.includes(fragranceId);
   }, [fragranceId, heartedFragrances]);
-  console.log(fragranceHearted);
 
   const saveHeartedFragrance = useCallback(() => {
     if (!fragranceHearted) {

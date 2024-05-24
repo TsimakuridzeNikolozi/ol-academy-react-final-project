@@ -12,6 +12,11 @@ export const useCart = ({ fragranceId }) => {
     return cartItems.find((item) => item.id === fragranceId)?.quantity;
   }, [fragranceId, cartItems]);
 
+  const cartItemsCount = cartItems.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
+
   const addFragranceToCart = useCallback(() => {
     setCartItems((prev) => [...prev, { id: fragranceId, quantity: 1 }]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -49,8 +54,10 @@ export const useCart = ({ fragranceId }) => {
 
   return {
     cartItems,
+    setCartItems,
     fragranceInCart,
     itemQuantity,
+    cartItemsCount,
     addFragranceToCart,
     handleIncrease,
     handleDecrease,

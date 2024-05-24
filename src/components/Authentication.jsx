@@ -1,11 +1,17 @@
-import { Button, ButtonGroup } from "reactstrap";
+import { Badge, Button, ButtonGroup } from "reactstrap";
 import { ReactComponent as CartIcon } from "../assets/images/CartIcon.svg";
 import { Link } from "react-router-dom";
 import { NAVIGATION_ROUTES } from "../constants";
 import { useAuthentication } from "../hooks/useAuthentication";
+import { useLocalStorage } from "usehooks-ts";
 
 export const Authentication = () => {
   const { currentUser, signInWithGoogle, logout } = useAuthentication();
+  const [cartItems] = useLocalStorage("cartItems", []);
+  const cartItemsCount = cartItems.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
 
   return (
     <>
@@ -37,6 +43,7 @@ export const Authentication = () => {
           <Button outline>
             <Link to={NAVIGATION_ROUTES.cart}>
               <CartIcon width="30" height="30" />
+              <Badge>{cartItemsCount}</Badge>
             </Link>
           </Button>
           <Button
@@ -50,16 +57,24 @@ export const Authentication = () => {
           </Button>
         </ButtonGroup>
       ) : (
-        <Button
-          color="primary"
-          outline
-          onClick={signInWithGoogle}
-          style={{
-            height: "50px",
-          }}
-        >
-          Sign In With Google
-        </Button>
+        <ButtonGroup>
+          <Button
+            color="primary"
+            outline
+            onClick={signInWithGoogle}
+            style={{
+              height: "50px",
+            }}
+          >
+            Sign In With Google
+          </Button>
+          <Button outline>
+            <Link to={NAVIGATION_ROUTES.cart}>
+              <CartIcon width="30" height="30" />
+              <Badge>{cartItemsCount}</Badge>
+            </Link>
+          </Button>
+        </ButtonGroup>
       )}
     </>
   );

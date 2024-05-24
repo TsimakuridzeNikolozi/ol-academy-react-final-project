@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardBody,
@@ -10,10 +10,11 @@ import {
 } from "reactstrap";
 import ImageCarousel from "./ImageCarousel";
 import { ReactComponent as HeartIcon } from "../../../assets/images/HeartIcon.svg";
-import { useLocalStorage } from "usehooks-ts";
 import { ReactComponent as CartIcon } from "../../../assets/images/CartIcon.svg";
 import { Link } from "react-router-dom";
 import { NAVIGATION_ROUTES } from "../../../constants";
+import { useCart } from "../../../hooks/useCart";
+import { useHeart } from "../../../hooks/useHeart";
 
 const FragranceCard = ({
   fragranceId,
@@ -23,24 +24,9 @@ const FragranceCard = ({
   description,
   imageSources,
   color,
-  rating,
-  numberOfRatings,
 }) => {
-  // Hearting functionality
-  const [heartedFragrances, setHeartedFragrances] = useLocalStorage(
-    "heartedFragrances",
-    []
-  );
-  const fragranceHearted = heartedFragrances.includes(fragranceId);
-
-  const saveHeartedFragrance = useCallback(() => {
-    if (!fragranceHearted) {
-      setHeartedFragrances((prev) => [...prev, fragranceId]);
-    } else {
-      setHeartedFragrances((prev) => prev.filter((id) => id !== fragranceId));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fragranceHearted, fragranceId]);
+  const { fragranceInCart, addFragranceToCart } = useCart({ fragranceId });
+  const { fragranceHearted, saveHeartedFragrance } = useHeart({ fragranceId });
 
   const [hover, setHover] = useState(false);
 
@@ -88,9 +74,15 @@ const FragranceCard = ({
           <Link to={`${NAVIGATION_ROUTES.item}/${fragranceId}`}>
             <Button color="primary">More</Button>
           </Link>
-          <Button color="success">
-            <CartIcon style={{ width: "20px", height: "20px" }} />
-          </Button>
+          {!fragranceInCart ? (
+            <Button color="success" onClick={() => addFragranceToCart()}>
+              <CartIcon style={{ width: "20px", height: "20px" }} />
+            </Button>
+          ) : (
+            <Button color="secondary" disabled>
+              In Cart
+            </Button>
+          )}
         </Col>
       </CardBody>
     </Card>

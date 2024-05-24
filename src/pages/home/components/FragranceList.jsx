@@ -55,8 +55,6 @@ const FragranceList = () => {
                 description={item.description}
                 imageSources={item.imageSources}
                 color={item.color}
-                rating={item.rating}
-                numberOfRatings={item.numberOfRatings}
               />
             </div>
           </Col>

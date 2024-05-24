@@ -12,6 +12,8 @@ import ImageCarousel from "./ImageCarousel";
 import { ReactComponent as HeartIcon } from "../../../assets/images/HeartIcon.svg";
 import { useLocalStorage } from "usehooks-ts";
 import { ReactComponent as CartIcon } from "../../../assets/images/CartIcon.svg";
+import { Link } from "react-router-dom";
+import { NAVIGATION_ROUTES } from "../../../constants";
 
 const FragranceCard = ({
   fragranceId,
@@ -83,7 +85,9 @@ const FragranceCard = ({
         </CardSubtitle>
         <CardText className="textWithLineClamp">{description}</CardText>
         <Col className="d-flex gap-2">
-          <Button color="primary">More</Button>
+          <Link to={`${NAVIGATION_ROUTES.item}/${fragranceId}`}>
+            <Button color="primary">More</Button>
+          </Link>
           <Button color="success">
             <CartIcon style={{ width: "20px", height: "20px" }} />
           </Button>

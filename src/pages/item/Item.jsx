@@ -22,7 +22,7 @@ const Item = () => {
         <Col xs="12" md="6" className="d-flex flex-column gap-3">
           <ItemImages imageSources={currentFragrance?.imageSources ?? []} />
           <div className="d-none d-md-block">
-            <CommentInputForm fragranceId={currentFragrance.id} />
+            <CommentInputForm fragranceId={currentFragrance?.id} />
             <CommentsList fragrance={currentFragrance} />
           </div>
         </Col>
@@ -32,7 +32,7 @@ const Item = () => {
       </Row>
       <Row className="d-md-none mt-3">
         <Col xs="12" className="d-flex flex-column gap-2">
-          <CommentInputForm fragranceId={currentFragrance.id} />
+          <CommentInputForm fragranceId={currentFragrance?.id} />
           <CommentsList fragrance={currentFragrance} />
         </Col>
       </Row>

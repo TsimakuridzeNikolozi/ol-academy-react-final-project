@@ -14,6 +14,7 @@ const CommentInputForm = ({ fragranceId }) => {
     const newComment = {
       comment: comment,
       user: {
+        userId: currentUser.uid,
         displayName: currentUser.displayName,
         photoURL: currentUser.photoURL,
       },
@@ -25,37 +26,34 @@ const CommentInputForm = ({ fragranceId }) => {
     setComment("");
   };
 
-  return (
-    currentUser && (
-      <Form onSubmit={handleSubmit}>
-        <FormGroup className="w-100 d-flex flex-column gap-2">
-          <div className="d-flex align-items-start gap-2">
-            <img
-              src={currentUser?.photoURL}
-              alt={currentUser?.displayName ?? "User"}
-              width="40"
-              height="40"
-              style={{ borderRadius: "100%" }}
-            />
-            <Input
-              type="textarea"
-              placeholder="Leave a review..."
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-          </div>
-          <div className="d-flex justify-content-end">
-            <Button
-              disabled={comment.length === 0}
-              type="submit"
-              color="primary"
-            >
-              Comment
-            </Button>
-          </div>
-        </FormGroup>
-      </Form>
-    )
+  if (!fragranceId) return null;
+  return currentUser ? (
+    <Form onSubmit={handleSubmit}>
+      <FormGroup className="w-100 d-flex flex-column gap-2">
+        <div className="d-flex align-items-start gap-2">
+          <img
+            src={currentUser?.photoURL}
+            alt={currentUser?.displayName ?? "User"}
+            width="40"
+            height="40"
+            style={{ borderRadius: "100%" }}
+          />
+          <Input
+            type="textarea"
+            placeholder="Leave a review..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+        </div>
+        <div className="d-flex justify-content-end">
+          <Button disabled={comment.length === 0} type="submit" color="primary">
+            Comment
+          </Button>
+        </div>
+      </FormGroup>
+    </Form>
+  ) : (
+    <p className="text-center">Please sign in to leave a comment</p>
   );
 };
 

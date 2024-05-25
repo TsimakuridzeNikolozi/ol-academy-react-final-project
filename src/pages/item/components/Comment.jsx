@@ -9,16 +9,10 @@ const Comment = ({ comment, likes, dislikes }) => {
   const { addLike, addDislike } = useDB();
 
   const [likedByCurrentUser, setLikedByCurrentUser] = useState(
-    likes?.find(
-      (reaction) =>
-        reaction.userId === currentUser.uid && reaction.type === "like"
-    )
+    likes?.find((reaction) => reaction.userId === currentUser.uid)
   );
   const [dislikedByCurrentUser, setDislikedByCurrentUser] = useState(
-    dislikes?.find(
-      (reaction) =>
-        reaction.userId === currentUser.uid && reaction.type === "dislike"
-    )
+    dislikes?.find((reaction) => reaction.userId === currentUser.uid)
   );
 
   const [likesCount, setLikesCount] = useState(comment.likes);

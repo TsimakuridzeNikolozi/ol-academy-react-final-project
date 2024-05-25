@@ -3,7 +3,7 @@ import FragranceList from "./components/FragranceList";
 
 const Home = () => {
   return (
-    <div>
+    <div style={{ minHeight: "100vh" }}>
       <div className="p-4">
         <h1 className="h-4 h-3-md h-2-lg h-1-xl text-center my-3">
           Discover Your Signature Scent with Our Fragrance Explorer

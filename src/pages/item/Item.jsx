@@ -17,7 +17,7 @@ const Item = () => {
   }, [itemId, fragranceList]);
 
   return (
-    <Container fluid>
+    <Container fluid style={{ minHeight: "100vh" }}>
       <Row className="d-flex align-items-start mt-4">
         <Col xs="12" md="6" className="d-flex flex-column gap-3">
           <ItemImages imageSources={currentFragrance?.imageSources ?? []} />

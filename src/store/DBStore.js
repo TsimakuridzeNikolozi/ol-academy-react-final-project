@@ -196,7 +196,7 @@ export const DBProvider = ({ children }) => {
       if (previousDislike) {
         await deleteDoc(dislikeDocToUpdate);
         await updateDoc(commentDocToUpdate, {
-          dislike: previousDislikeCount - 1,
+          dislikes: previousDislikeCount - 1,
         });
       } else {
         await setDoc(dislikeDocToUpdate, {

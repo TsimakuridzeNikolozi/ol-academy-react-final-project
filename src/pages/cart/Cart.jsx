@@ -32,8 +32,8 @@ const Cart = () => {
     event.preventDefault();
     setContextMenu({
       visible: true,
-      x: event.clientX,
-      y: event.clientY,
+      x: event.pageX,
+      y: event.pageY,
       item,
     });
   };
